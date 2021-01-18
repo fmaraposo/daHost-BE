@@ -84,6 +84,7 @@ router.post('/logout', (req, res) => {
 
 router.get('/loggedin', (req, res) => {
   if (req.isAuthenticated()) {
+    console.log(req.isAuthenticated());
     res.json(req.user);
     return;
   }
@@ -97,20 +98,19 @@ router.get(
   '/auth/spotify',
   passport.authenticate('spotify', {
     scope: ['user-read-email', 'user-read-private', 'playlist-modify-public'],
-    showDialog: true
+    showDialog: true,
   })
 );
 
 router.get(
   '/auth/spotify/callback',
   passport.authenticate('spotify', {
-    failureRedirect: `${process.env.CLIENT_HOSTNAME}/login`,
+    failureRedirect: `${process.env.CLIENT_HOSTNAME}/`,
   }),
   function (req, res) {
-    // Successful authentication, redirect home.
+    // Successful authentication.
     res.redirect(`${process.env.CLIENT_HOSTNAME}/quiz-creation`);
   }
 );
 
 module.exports = router;
-

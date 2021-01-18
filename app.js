@@ -37,6 +37,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.disable('etag');
 
 // Express View engine setup
 
@@ -62,7 +63,7 @@ app.locals.title = 'Express - Generated with IronGenerator';
 app.use(
   cors({
     credentials: true,
-    origin: ['https://dahost.herokuapp.com'], //where the requests come from, is the url of the frontend. The Backend must allow FrontEnd.
+    origin: [`${process.env.CLIENT_HOSTNAME}`], //where the requests come from, is the url of the frontend. The Backend must allow FrontEnd.
   })
 );
 

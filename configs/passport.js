@@ -43,7 +43,7 @@ passport.use(
       next(null,foundUser);
     });
   })
-);
+); 
 
 //Authenticating Using Spotify
 passport.use(
@@ -57,7 +57,7 @@ passport.use(
       User.findOne({ spotifyId: profile.id })
       .then((user) => {
         if (!user) {
-          return User.create({
+           User.create({
             spotifyId: profile.id,
             accessToken,
             refreshToken,

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
+/* const mongoose = require('mongoose'); */
 const { format } = require('morgan');
 const Quiz = require('../models/Quiz');
 const SpotifyWebAPI = require('spotify-web-api-node');
@@ -31,20 +31,16 @@ router.post('/quiz', (req, res) => {
     });
 });
 
-//Get the quiz code and display on frontend
-router.get('/quiz/:code', (req, res) => {
-  const code = req.params.code;
-  Quiz.findOne({ quizCode: code }).then((quiz) => {
-    res.json(quiz.quizCode);
-  });
-});
-
-//Get the Quiz from its quiz code
+//Lobby Game - Get the Quiz from its quiz code and display the users
 router.get('/quiz-code/:code', (req, res) => {
   const code = req.params.code;
-  Quiz.find({ quizCode: code }).then((quiz) => {
-    res.json(quiz);
-  });
+  Quiz.findOne({ quizCode: code })
+    .then((quiz) => {
+      res.json(quiz);
+    })
+    .catch(() => {
+      res.json({ message: 'No Quiz Found' });
+    });
 });
 
 //Add array of songs to the Quiz Model
@@ -60,27 +56,23 @@ router.put('/quiz/:quizCode/addsongs', (req, res) => {
   });
 });
 
-//Add array of users to the Quiz Model
+//Home Page -> Filling the form to join a quiz
 router.put('/quiz/:code/users', (req, res) => {
   const code = req.params.code;
   const users = req.body.users;
-  console.log(req.body);
- /* Quiz.find({quizCode: code}).then((response) => {
-    if(!response) {
-      console.log('no quiz found')
-      res.json({ error: `no quiz found` });
+  Quiz.findOne({ quizCode: code }).then((response) => {
+    if (!response) {
+      console.log('No Quiz Found');
+      res.json({ error: 'No Quiz Found' });
     } else {
-      let quizId = response._id
-     return Quiz.findByIdAndUpdate(quizId, { $push: { users: users } }) 
+      return Quiz.findOneAndUpdate(
+        { quizCode: code },
+        { $push: { users: users } }
+      ).then(() => {
+        res.json({ message: `Quiz ${code} was updated with ${users}` });
+      });
     }
-  }).then(() => {
-    res.json({ message: `quiz with id ${code} was updated with ${users}` });
-  }) */
-  Quiz.findOneAndUpdate({ quizCode: code }, { $push: { users: users } }).then(
-    () => {
-      res.json({ message: `quiz with id ${code} was updated with ${users}` });
-    }
-  ); 
+  });
 });
 
 router.post('/quiz/:code/playlist', (req, res) => {
@@ -106,7 +98,9 @@ router.post('/quiz/:code/playlist', (req, res) => {
     spotifyAPI.setAccessToken(access_token);
 
     songs.forEach((song) => {
-      if (song === '') { (song = "Never Gonna Give You Up")}
+      if (song === '') {
+        song = 'Never Gonna Give You Up';
+      }
       getTrackPromises.push(spotifyAPI.searchTracks(`track:${song}`));
     });
     Promise.all(getTrackPromises)
