@@ -63,7 +63,7 @@ app.locals.title = 'Express - Generated with IronGenerator';
 app.use(
   cors({
     credentials: true,
-    origin: [`${process.env.CLIENT_HOSTNAME}`], //where the requests come from, is the url of the frontend. The Backend must allow FrontEnd.
+    origin: [`https://dahostapp.herokuapp.com/`], //where the requests come from, is the url of the frontend. The Backend must allow FrontEnd.
   })
 );
 
