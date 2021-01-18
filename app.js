@@ -41,7 +41,7 @@ app.disable('etag');
 
 // Express View engine setup
 
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, '.dist')));
 /* app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico'))); */
 
 //Session
@@ -68,12 +68,12 @@ app.use(
 );
 
 const index = require('./routes/index');
-app.use('/', index);
-
 const authRoutes = require('./routes/auth-routes.js');
-app.use('/api', authRoutes);
-
 const projectRoutes = require('./routes/project-routes.js');
+
+
+app.use('/api', authRoutes);
 app.use('/api', projectRoutes);
+app.use('/', index);
 
 module.exports = app;
